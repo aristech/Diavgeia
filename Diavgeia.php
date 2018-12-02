@@ -432,7 +432,7 @@ echo $txt;
         $a = shortcode_atts( array(
             'id' => 6
          ), $atts );
-         $txt = '<div class="container">
+         $txt = '<div class="container" style="overflow-x:auto;">
                     <table id="divgeiaTable" class="table table-hover table-bordered">
                         <thead>
                             <tr>
