@@ -73,13 +73,13 @@ class Diavgeia {
                                             'type'  => 'text'
                                         ),
                                         array(
-                                            'label'=> 'Ημερομηνία τελευταίας τροποποίησης (έως)',
+                                            'label'=> 'Ημερομηνία τελευταίας τροποποίησης (από)',
                                             'desc'  => 'default=όλες',
                                             'id'    => $this->prefix.'datepick3',
                                             'type'  => 'text'
                                         ),
                                         array(
-                                            'label'=> 'Ημερομηνία τελευταίας τροποποίησης (από)',
+                                            'label'=> 'Ημερομηνία τελευταίας τροποποίησης (έως)',
                                             'desc'  => 'default=όλες',
                                             'id'    => $this->prefix.'datepick4',
                                             'type'  => 'text'
@@ -355,9 +355,9 @@ class Diavgeia {
                 $selectBox = get_post_meta($post->ID, "aristech_select", true);
                 $textBox = get_post_meta($post->ID, "aristech_text", true);
                 $textBoxReady = $textBox ? '&fq=unitUid:[' . multiPart($textBox) . ']' : '';
-                $datepick1 = get_post_meta($post->ID, "aristech_datepick1", true) ? '&fq=submissionTimestamp:[DT(' . get_post_meta($post->ID, "aristech_datepick1", true) . 'T00:00:00)%20TO%20DT(' : '';
+                $datepick1 = get_post_meta($post->ID, "aristech_datepick1", true) ? '&fq=issueDate:[DT(' . get_post_meta($post->ID, "aristech_datepick1", true) . 'T00:00:00)%20TO%20DT(' : '';
                 $datepick2 = get_post_meta($post->ID, "aristech_datepick2", true) ? get_post_meta($post->ID, "aristech_datepick2", true) . 'T23:59:59)]' : $date->format('Y-m-d') .'T23:59:59)]';
-                $datepick3 = get_post_meta($post->ID, "aristech_datepick3", true) ? '&fq=issueDate:[DT(' . get_post_meta($post->ID, "aristech_datepick3", true) . 'T00:00:00)%20TO%20DT(' : '';
+                $datepick3 = get_post_meta($post->ID, "aristech_datepick3", true) ? '&fq=submissionTimestamp:[DT(' . get_post_meta($post->ID, "aristech_datepick3", true) . 'T00:00:00)%20TO%20DT(' : '';
                 $datepick4 = get_post_meta($post->ID, "aristech_datepick4", true) ? get_post_meta($post->ID, "aristech_datepick4", true) . 'T23:59:59)]' : $date->format('Y-m-d') .'T23:59:59)]';
                 $extra = get_post_meta($post->ID, "aristech_extra", true) ? get_post_meta($post->ID, "aristech_extra", true) . '&fq=' : '';
                 $textArea = get_post_meta($post->ID, 'aristech_textarea', true);
@@ -365,13 +365,13 @@ class Diavgeia {
 
 
 
-                $dateSubmission = $datepick1 != '' ? $datepick1 . $datepick2 : '';
-                $dateIssue = $datepick3 != '' ? $datepick3 . $datepick4 : '';
+                $dateIssue = $datepick1 != '' ? $datepick1 . $datepick2 : '';
+                $dateSubmission = $datepick3 != '' ? $datepick3 . $datepick4 : '';
 
                 $searchUrl = $this->opendata . $extra . $selectBox . ':['.multiPart($textArea).']'. $textBoxReady . $dateSubmission . $dateIssue . '&wt=json' ;
                 $json = file_get_contents($searchUrl);
                 $mobj = json_decode($json);
-                echo $this->opendata . $extra . $selectBox . ':['.multiPart($textArea).']'. $textBoxReady . $dateSubmission . $dateIssue . '&wt=json' ;
+                echo $this->opendata . $extra . $selectBox . ':['.multiPart($textArea).']'. $textBoxReady . $dateIssue . $dateSubmission . '&sort=recent&wt=json' ;
                 $myobj = $mobj->decisionResultList;
                 foreach ($myobj as $key => &$value) {
 
@@ -433,74 +433,76 @@ echo $txt;
             'id' => 6
          ), $atts );
          $txt = '<div class="container" style="overflow-x:auto;">
-                    <table id="divgeiaTable" class="table table-hover table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col">Ημ/νια Πράξης</th>
-                                <th scope="col">Ημ/νια Ανάρτησης</th>
-                                <th scope="col">Θεμα</th>
-                                <th scope="col">ΑΔΑ</th>
-                                <th scope="col">Τύπος Πράξης</th>
-                                <th scope="col">Αρ. Πρωτοκόλου</th>
-                                <th scope="col">URL Εγγράφου</th>
-                            </tr>
-                        </thead>
-                        <tbody>';
-                        function multiPart($items) {
-                            $textItems = explode(',', $items);
-                            $readyItems = '';
 
-                            foreach ($textItems as $item => $v) {
+            <table id="divgeiaTable" class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Ημ/νια Πράξης</th>
+                        <th scope="col">Ημ/νια Ανάρτησης</th>
+                        <th scope="col">Θεμα</th>
+                        <th scope="col">ΑΔΑ</th>
+                        <th scope="col">Τύπος Πράξης</th>
+                        <th scope="col">Αρ. Πρωτοκόλου</th>
+                        <th scope="col">URL Εγγράφου</th>
+                    </tr>
+                </thead>
+                <tbody>';
+                function multiPart($items) {
+                    $textItems = explode(',', $items);
+                    $readyItems = '';
 
-                                end($textItems);
-                                if ($item === key($textItems)) {
+                    foreach ($textItems as $item => $v) {
 
-                                $readyItems .= '"'.$v .'"';
+                        end($textItems);
+                        if ($item === key($textItems)) {
 
-                                } else {
-                                    $readyItems .= '"'.$v .'",';
-                                }
-                            }
-                            return $readyItems;
+                        $readyItems .= '"'.$v .'"';
+
+                        } else {
+                            $readyItems .= '"'.$v .'",';
                         }
-                        $date = new DateTime();
+                    }
+                    return $readyItems;
+                }
+                $date = new DateTime();
 
-                        $selectBox = get_post_meta($a['id'], "aristech_select", true);
-                        $textBox = get_post_meta($a['id'], "aristech_text", true);
-                        $textBoxReady = $textBox ? '&fq=unitUid:[' . multiPart($textBox) . ']' : '';
-                        $datepick1 = get_post_meta($a['id'], "aristech_datepick1", true) ? '&fq=submissionTimestamp:[DT(' . get_post_meta($a['id'], "aristech_datepick1", true) . 'T00:00:00)%20TO%20DT(' : '';
-                        $datepick2 = get_post_meta($a['id'], "aristech_datepick2", true) ? get_post_meta($a['id'], "aristech_datepick2", true) . 'T23:59:59)]' : $date->format('Y-m-d') .'T23:59:59)]';
-                        $datepick3 = get_post_meta($a['id'], "aristech_datepick3", true) ? '&fq=issueDate:[DT(' . get_post_meta($a['id'], "aristech_datepick3", true) . 'T00:00:00)%20TO%20DT(' : '';
-                        $datepick4 = get_post_meta($a['id'], "aristech_datepick4", true) ? get_post_meta($a['id'], "aristech_datepick4", true) . 'T23:59:59)]' : $date->format('Y-m-d') .'T23:59:59)]';
-                        $extra = get_post_meta($a['id'], "aristech_extra", true) ? get_post_meta($a['id'], "aristech_extra", true) . '&fq=' : '';
-                        $textArea = get_post_meta($a['id'], 'aristech_textarea', true);
-
-
-
-
-                        $dateSubmission = $datepick1 != '' ? $datepick1 . $datepick2 : '';
-                        $dateIssue = $datepick3 != '' ? $datepick3 . $datepick4 : '';
-
-                        $searchUrl = $this->opendata . $extra . $selectBox . ':['.multiPart($textArea).']'. $textBoxReady . $dateSubmission . $dateIssue . '&wt=json' ;
-                        $json = file_get_contents($searchUrl);
-                        $mobj = json_decode($json);
-                        $myobj = $mobj->decisionResultList;
-                        foreach ($myobj as $key => &$value) {
+                $selectBox = get_post_meta($a['id'], "aristech_select", true);
+                $textBox = get_post_meta($a['id'], "aristech_text", true);
+                $textBoxReady = $textBox ? '&fq=unitUid:[' . multiPart($textBox) . ']' : '';
+                $datepick1 = get_post_meta($a['id'], "aristech_datepick1", true) ? '&fq=issueDate:[DT(' . get_post_meta($a['id'], "aristech_datepick1", true) . 'T00:00:00)%20TO%20DT(' : '';
+                $datepick2 = get_post_meta($a['id'], "aristech_datepick2", true) ? get_post_meta($a['id'], "aristech_datepick2", true) . 'T23:59:59)]' : $date->format('Y-m-d') .'T23:59:59)]';
+                $datepick3 = get_post_meta($a['id'], "aristech_datepick3", true) ? '&fq=submissionTimestamp:[DT(' . get_post_meta($a['id'], "aristech_datepick3", true) . 'T00:00:00)%20TO%20DT(' : '';
+                $datepick4 = get_post_meta($a['id'], "aristech_datepick4", true) ? get_post_meta($a['id'], "aristech_datepick4", true) . 'T23:59:59)]' : $date->format('Y-m-d') .'T23:59:59)]';
+                $extra = get_post_meta($a['id'], "aristech_extra", true) ? get_post_meta($a['id'], "aristech_extra", true) . '&fq=' : '';
+                $textArea = get_post_meta($a['id'], 'aristech_textarea', true);
 
 
-                                $txt .= '<tr>';
-                                $txt .= '<td scope="row">'. $value->issueDate.'</td>';
-                                $txt .= '<td scope="row">'. $value->submissionTimestamp .'</td>';
-                                $txt .= '<td scope="row">'. $value->subject .'</td>';
-                                $txt .= '<th scope="row">'. $value->ada .'</th>';
-                                $txt .= '<td scope="row">'. $value->decisionTypeLabel .'</td>';
-                                $txt .= '<td scope="row">'. $value->protocolNumber  .'</td>';
-                                $txt .= '<td scope="row"><a href="'. $value->documentUrl  .'" target="_self"><button type="button" class="btn btn-small btn-outline-secondary">λήψη</button></a><br><a href="'. $value->documentUrl  .'?inline=true" target="_blank"><button type="button" class="btn btn-small btn-outline-secondary">Προβολή αρχείου</button></a></td>';
-                                $txt .= '</tr>';
-                        }
 
 
-                        $txt .= '</tbody>
+                $dateIssue = $datepick1 != '' ? $datepick1 . $datepick2 : '';
+                $dateSubmission = $datepick3 != '' ? $datepick3 . $datepick4 : '';
+
+                $searchUrl = $this->opendata . $extra . $selectBox . ':['.multiPart($textArea).']'. $textBoxReady . $dateSubmission . $dateIssue . '&wt=json' ;
+                $json = file_get_contents($searchUrl);
+                $mobj = json_decode($json);
+
+                $myobj = $mobj->decisionResultList;
+                foreach ($myobj as $key => &$value) {
+
+
+                        $txt .= '<tr>';
+                        $txt .= '<td scope="row">'. $value->issueDate.'</td>';
+                        $txt .= '<td scope="row">'. $value->submissionTimestamp .'</td>';
+                        $txt .= '<td scope="row">'. $value->subject .'</td>';
+                        $txt .= '<th scope="row">'. $value->ada .'</th>';
+                        $txt .= '<td scope="row">'. $value->decisionTypeLabel .'</td>';
+                        $txt .= '<td scope="row">'. $value->protocolNumber  .'</td>';
+                        $txt .= '<td scope="row"><a href="'. $value->documentUrl  .'" target="_self"><button type="button" class="btn btn-small btn-outline-secondary">λήψη</button></a><br><a href="'. $value->documentUrl  .'?inline=true" target="_blank"><button type="button" class="btn btn-small btn-outline-secondary">Προβολή αρχείου</button></a></td>';
+                        $txt .= '</tr>';
+                }
+
+
+                $txt .= '</tbody>
                         </table>
                 </div>';
         return $txt;
