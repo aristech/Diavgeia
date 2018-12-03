@@ -1,5 +1,6 @@
 jQuery(document).ready(function($) {
   $("#myTable").DataTable({
+    bSort: false,
     language: {
       sDecimal: ",",
       sEmptyTable: "Δεν υπάρχουν δεδομένα στον πίνακα",

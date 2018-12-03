@@ -136,8 +136,8 @@ class Diavgeia {
 
     function enqueueAdmin() {
         wp_enqueue_script( 'jquery-ui-datepicker' );
-        wp_register_style( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css' );
-        wp_enqueue_style('bootstrap');
+        // wp_register_style( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css' );
+        // wp_enqueue_style('bootstrap');
         wp_register_style( 'databootstrap', 'https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css' );
         wp_enqueue_style('databootstrap');
 
@@ -155,16 +155,16 @@ class Diavgeia {
         wp_register_script( 'popper', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js', array( 'jquery' ), false, true );
         wp_enqueue_script('popper');
 
-        wp_register_script( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js', array( 'jquery' ), false, true );
-        wp_enqueue_script('bootstrap');
+        // wp_register_script( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js', array( 'jquery' ), false, true );
+        // wp_enqueue_script('bootstrap');
 
         wp_enqueue_script( 'adm_script', plugin_dir_url( __FILE__ ) . 'js/aristech_admin_script.js', array( 'jquery' ), false, true );
     }
 
     public function enqueueWp() {
         wp_enqueue_script( 'jquery-ui-datepicker' );
-        wp_register_style( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css' );
-        wp_enqueue_style('bootstrap');
+        // wp_register_style( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css' );
+        // wp_enqueue_style('bootstrap');
         wp_register_style( 'databootstrap', 'https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css' );
         wp_enqueue_style('databootstrap');
 
@@ -373,6 +373,9 @@ class Diavgeia {
                 $mobj = json_decode($json);
                 echo $this->opendata . $extra . $selectBox . ':['.multiPart($textArea).']'. $textBoxReady . $dateIssue . $dateSubmission . '&sort=recent&wt=json' ;
                 $myobj = $mobj->decisionResultList;
+                usort($myobj, function ($a, $b) {
+                    return strtotime(str_replace('/','-',$b->issueDate)) - strtotime(str_replace('/','-',$a->issueDate));
+                });
                 foreach ($myobj as $key => &$value) {
 
 
@@ -383,7 +386,7 @@ class Diavgeia {
                         $txt .= '<th scope="row">'. $value->ada .'</th>';
                         $txt .= '<td scope="row">'. $value->decisionTypeLabel .'</td>';
                         $txt .= '<td scope="row">'. $value->protocolNumber  .'</td>';
-                        $txt .= '<td scope="row"><a href="'. $value->documentUrl  .'" target="_self"><button type="button" class="btn btn-small btn-outline-secondary">λήψη</button></a><br><a href="'. $value->documentUrl  .'?inline=true" target="_blank"><button type="button" class="btn btn-small btn-outline-secondary">Προβολή αρχείου</button></a></td>';
+                        $txt .= '<td scope="row"><a href="'. $value->documentUrl  .'" target="_self"><button type="button" class="btn btn-small btn-outline-secondary">λήψη</button></a><br><a href="'. $value->documentUrl  .'?inline=true" target="_blank"><button type="button" class="btn btn-small btn-outline-secondary">Προβολή</button></a></td>';
                         $txt .= '</tr>';
                 }
 
@@ -487,6 +490,9 @@ echo $txt;
                 $mobj = json_decode($json);
 
                 $myobj = $mobj->decisionResultList;
+                usort($myobj, function ($a, $b) {
+                    return strtotime(str_replace('/','-',$b->issueDate)) - strtotime(str_replace('/','-',$a->issueDate));
+                });
                 foreach ($myobj as $key => &$value) {
 
 
@@ -497,7 +503,7 @@ echo $txt;
                         $txt .= '<th scope="row">'. $value->ada .'</th>';
                         $txt .= '<td scope="row">'. $value->decisionTypeLabel .'</td>';
                         $txt .= '<td scope="row">'. $value->protocolNumber  .'</td>';
-                        $txt .= '<td scope="row"><a href="'. $value->documentUrl  .'" target="_self"><button type="button" class="btn btn-small btn-outline-secondary">λήψη</button></a><br><a href="'. $value->documentUrl  .'?inline=true" target="_blank"><button type="button" class="btn btn-small btn-outline-secondary">Προβολή αρχείου</button></a></td>';
+                        $txt .= '<td scope="row"><a href="'. $value->documentUrl  .'" target="_self"><button type="button" class="btn btn-small btn-outline-secondary">λήψη</button></a><br><a href="'. $value->documentUrl  .'?inline=true" target="_blank"><button type="button" class="btn btn-small btn-outline-secondary">Προβολή</button></a></td>';
                         $txt .= '</tr>';
                 }
 
